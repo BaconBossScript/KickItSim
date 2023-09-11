@@ -1,0 +1,139 @@
+
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "BaconBoss | Clicker", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+
+getgenv().teleportEnabled = state
+_G.train = true
+_G.segg = "DefaultIncubator"
+_G.egg = true
+getgenv().tpPlace = "string"
+
+function Teleport(teleportPlace)
+    local player = game.Players.LocalPlayer
+    player.Character.HumanoidRootPart.CFrame = teleportPlace
+end
+
+    
+local hitBoxes = {}
+for _, obj in pairs(game.Workspace:GetDescendants()) do
+    if obj:IsA("BasePart") and obj.Name == "hitBox" and obj.Parent and obj.Parent:IsA("Model") then
+            table.insert(hitBoxes, obj.Position)
+    end
+end
+  
+function tp()
+     while getgenv().teleportEnabled do
+      local character = game.Players.LocalPlayer.Character
+     if character then
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    
+            for _, position in ipairs(hitBoxes) do
+                if humanoidRootPart then
+                    humanoidRootPart.CFrame = CFrame.new(position)
+                end
+                wait()
+            end
+        end
+    end
+end
+
+function train()
+     while _G.train == true do
+        local args = {
+            [1] = workspace:WaitForChild("Game"):WaitForChild("TrainingSetups"):WaitForChild("LargeStationaryBike")
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("StellarFramework"):WaitForChild("Network"):WaitForChild("OccupySetup"):FireServer(unpack(args))
+     wait(1)
+    end
+end  
+
+function egg()
+     while _G.egg == true do 
+        game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("StellarFramework"):WaitForChild("Network"):WaitForChild("HatchPet"):InvokeServer(_G.segg,1)
+        wait(0)
+    end
+end
+        
+
+
+local MainTab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local eggTab = Window:MakeTab({
+	Name = "Egg",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local tpTab = Window:MakeTab({
+	Name = "Tp",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+
+MainTab:AddToggle({
+	Name = "Auto Collect Ore",
+	Default = false,
+	Callback = function(Value)
+		getgenv().teleportEnabled = Value
+        tp()
+	end    
+})
+
+MainTab:AddToggle({
+	Name = "Auto Best Train",
+	Default = false,
+	Callback = function(Value)
+		_G.train = Value
+        train()
+	end    
+})
+
+eggTab:AddToggle({
+	Name = "Auto Hatch",
+	Default = false,
+	Callback = function(Value)
+		_G.egg = Value
+        egg()
+	end    
+})
+
+eggTab:AddDropdown({
+	Name = "Select Egg",
+	Default = "DefaultIncubator",
+	Options = {"DefaultIncubator", "DefaultIncubator2", "Summer Egg", "Summer Egg 2", "Winter Egg 1", "Winter Egg 2", "Lava Egg 1", "Lava Egg 2"},
+	Callback = function(Value)
+		_G.segg = Value
+	end    
+})
+
+tpTab:AddDropdown({
+	Name = "Select World",
+	Default = "World 1",
+	Options = {"World 1", "World 2", "World 3", "World 4"},
+	Callback = function(Value)
+	    getgenv().tpPlace = Value  
+	end    
+})
+
+tpTab:AddButton({
+	Name = "Tp",
+	Callback = function()
+	    if getgenv().tpPlace == "World 1" then
+      	 Teleport(game:GetService("Workspace").Game.MapCenters.Spawn.CFrame)
+		elseif getgenv().tpPlace == "World 2" then
+         Teleport(game:GetService("Workspace").Game.MapCenters["World 2"].CFrame)
+        elseif getgenv().tpPlace == "World 3" then
+      	 Teleport(game:GetService("Workspace").Game.MapCenters["World 3"].CFrame)
+		elseif getgenv().tpPlace == "World 4" then
+         Teleport(game:GetService("Workspace").Game.MapCenters["World 4"].CFrame)
+	    end    
+    end
+}) 
